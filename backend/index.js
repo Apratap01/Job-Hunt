@@ -1,28 +1,18 @@
-import cookieParser from 'cookie-parser';
-import express from 'express'
-import cors from "cors"
-
-const app = express()
+import { app } from "./app.js";
+import dotenv from "dotenv"
+import connectDB from './utils/db.js';
 
 
-app.get("/home",(req,res)=>{
-    return res.status(200).json({
-        message:"Hello",
-        success:true
+dotenv.config({
+    path: "./.env"
+})
+
+connectDB()
+.then(() =>{
+    app.listen(process.env.PORT || 8000,()=>{
+    console.log(`server running at port ${process.env.PORT}`)
     })
 })
-
-app.use(express.json());
-app.use(express.urlencoded({extended:true}))
-app.use(cookieParser)
-const corsOptions = {
-    origin:'http://localhost:5172',
-    credentials: true
-}
-app.use(cors(corsOptions))
-
-
-const PORT = 3000
-app.listen(PORT,()=>{
-    console.log(`server running at port ${PORT}`)
-})
+.catch((error) => {
+    console.log("Failed to connect to the database::",error);
+});
